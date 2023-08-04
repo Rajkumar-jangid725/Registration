@@ -4,7 +4,9 @@ import bcrypt from 'bcrypt';
 
 const methods = {
   POST: async (req, res) => {
-    const { newPassword, confirmPassword, email } = req.body;
+    const { newPassword, confirmPassword } = req.body;
+    const url = new URL(req.headers.referer);
+    const token = url.searchParams.get('token');
 
     if (newPassword !== confirmPassword) {
       res.status(400).json({ message: 'Passwords do not match' });
@@ -19,7 +21,7 @@ const methods = {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       const result = await collection.updateOne(
-        { email: email },
+        { token: token },
         { $set: { password: hashedPassword } },
         { writeConcern: { w: "majority", wtimeout: 5000 } }
       );

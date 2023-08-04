@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 export default function PasswordReset() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [email, setEmail] = useState('');
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,11 +22,12 @@ export default function PasswordReset() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ newPassword, confirmPassword, email }),
+                body: JSON.stringify({ newPassword, confirmPassword }),
             });
 
             if (response.ok) {
                 alert('Password updated successfully');
+                router.push('/passwordPage')
             } else {
                 alert('Failed to update password');
             }
@@ -38,15 +40,6 @@ export default function PasswordReset() {
         <div>
             <h1>Password Reset</h1>
             <form onSubmit={handleSubmit}>
-                <label>
-                    Email:
-                    <input
-                        type="text"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </label>
-                <br />
                 <label>
                     New Password:
                     <input
